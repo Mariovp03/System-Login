@@ -1,0 +1,18 @@
+{
+    "name": "mario/system",
+    "description": "Estudando Composer",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Controller\\": "App/Controllers",
+            "Model\\": "App/Models"
+        }
+    },
+    "authors": [
+        {
+            "name": "Mário do Vale"
+        }
+    ],
+    "require": {
+    }
+}
