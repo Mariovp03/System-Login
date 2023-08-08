@@ -39,9 +39,8 @@ function load($controller, $action){
 
     $routerIsLogged = [
         "GET" => [
-            "" => fn() => load("HomeController", "index"),
+            "home" => fn() => load("HomeController", "index"),
         ],
         "POST" => [
-            "" => fn() => load("HomeController", "index"),
         ],
     ];

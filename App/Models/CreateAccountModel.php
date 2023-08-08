@@ -8,7 +8,7 @@ class CreateAccountModel extends Model{
     {
         $connectBd = $this->conn;
         $emailTreated = mysqli_real_escape_string($connectBd, $email);
-        $passwordTreated = mysqli_real_escape_string($connectBd, $password);
+        $passwordTreated = password_hash(mysqli_real_escape_string($connectBd, $password), PASSWORD_ARGON2ID);
         $sql = "INSERT INTO users (email, password) VALUES ('$emailTreated', '$passwordTreated')";
         $result = $connectBd->query($sql);
 

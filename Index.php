@@ -1,8 +1,10 @@
+
 <?php 
 require 'Config.php';
 require __DIR__ . '/vendor/autoload.php';
 require 'Routes/Router.php';
 include_once 'Views/HeaderView.php';
+
 session_start();
 
 try{
@@ -14,8 +16,6 @@ try{
     }else{
         $routeCurrent = $router;
     }
-    
-    var_dump($userIsLogged);
     
     $uriExplode = explode("/", $_SERVER["REQUEST_URI"]);
     
@@ -44,3 +44,4 @@ try{
 include_once 'Views/FooterView.php';
 
 ?>
+

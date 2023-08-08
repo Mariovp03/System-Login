@@ -7,6 +7,7 @@ use Model\LoginModel;
 class LoginController extends Controller
 {
     public function index(){
+        
         $this->dataUser();
         $this->getViewLogin();
     }
@@ -30,7 +31,7 @@ class LoginController extends Controller
         $searchUser = $loginModel->getUser($emailLoginUser, $passwordLoginUser);
         if(!empty($searchUser)){
             $_SESSION['userIsLogged'] = true;
-            header('location: ');
+            header('location: home');
         }
     }
 }
