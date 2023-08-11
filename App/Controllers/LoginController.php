@@ -30,6 +30,7 @@ class LoginController extends Controller
         $passwordLoginUser = !empty($_POST['password']) ? $_POST['password'] : NULL;
         $searchUser = $loginModel->getUser($emailLoginUser, $passwordLoginUser);
         if(!empty($searchUser)){
+            $_SESSION['idUserLogged'] = $searchUser['id'];
             $_SESSION['userIsLogged'] = true;
             header('location: home');
         }

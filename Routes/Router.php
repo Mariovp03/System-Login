@@ -40,7 +40,9 @@ function load($controller, $action){
     $routerIsLogged = [
         "GET" => [
             "home" => fn() => load("HomeController", "index"),
+            "alterar-perfil" => fn() => load("ProfileChangeController", "index"),
         ],
         "POST" => [
+            "alterar-perfil" => fn() => load("ProfileChangeController", "index"),
         ],
     ];
