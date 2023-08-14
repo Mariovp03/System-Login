@@ -23,8 +23,6 @@ function load($controller, $action){
     
 }
 
-
-
     $router = [
         "GET" => [
             "" => fn() => load("LoginController", "index"),
@@ -34,6 +32,7 @@ function load($controller, $action){
         "POST" => [
             "" => fn() => load("LoginController", "index"),
             "create-account" => fn() => load("CreateAccountController", "index"),
+            "forgot-password" => fn() => load("ForgotPasswordController", "index"),
         ],
     ];
 
