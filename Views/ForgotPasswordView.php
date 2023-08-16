@@ -9,4 +9,4 @@
         <button class="btn btn-lg btn-primary" name="sendRecoverPassword" type="submit">Enviar E-mail</button>
         <a href="." class="btn btn-lg btn-success" type="submit">Voltar</a>
     </form>
-</div>
+</div> 
