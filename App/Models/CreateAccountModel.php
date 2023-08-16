@@ -11,7 +11,6 @@ class CreateAccountModel extends Model{
         $passwordTreated = password_hash(mysqli_real_escape_string($connectBd, $password), PASSWORD_ARGON2ID);
         $sql = "INSERT INTO users (email, password) VALUES ('$emailTreated', '$passwordTreated')";
         $result = $connectBd->query($sql);
-
         return $result;
     }
     

@@ -18,12 +18,25 @@ class ForgotPasswordController extends Controller
     }
 
     public function index(){
+        $this->model->cleanToken();
         $this->handleToken();
         $this->getViewForgotPassword();
+        $this->updatePassword();
     }
 
     public function getViewForgotPassword(){
+        $tokenRecover = !empty($_GET['recoverPassword']) ? $_GET['recoverPassword'] : false;
+
+        $selectByToken = $this->model->selectByToken($tokenRecover);
+
+        $validateToken = !empty($selectByToken) ? true : false;
+       
         $pathForgotPasswordTreated = PATH_BASE_VIEW . "ForgotPasswordView.php";
+
+        if($validateToken){
+            $pathForgotPasswordTreated = PATH_BASE_VIEW . "UpdatePasswordView.php";
+        }
+        
         echo $this->getView(
             $pathForgotPasswordTreated ,
             [
@@ -33,7 +46,7 @@ class ForgotPasswordController extends Controller
     }
 
     public function createHash($email){
-        $passwordUser = $this->model->getRecoverPassword($email)['password'];
+        $passwordUser = $this->model->getRecoverPasswordByEmail($email)['password'];
         $passwordHash = !empty($passwordUser) ? password_hash($passwordUser, PASSWORD_DEFAULT) : "" ;
         return $passwordHash;
     }
@@ -47,6 +60,25 @@ class ForgotPasswordController extends Controller
             $insertToken = $this->model->insertTokenRecoverPassword($createHash, $emailRecoverPassword);
             $this->email();
         }
+    }
+
+    
+    public function recoverPassword(){
+        $emailRecoverPassword = !empty($_POST['emailRecover']) ? $_POST['emailRecover'] : NULL ;
+        if(isset($emailRecoverPassword)){
+            $tokenRecover = $this->model->getRecoverPasswordByEmail($emailRecoverPassword)['recoverPassword'];
+            return $tokenRecover;
+        }
+    }
+
+    public function updatePassword(){
+        $newPassword = !empty($_POST['newPassword']) ? $_POST['newPassword'] : NULL ;
+        $tokenRecover = !empty($_GET['recoverPassword']) ? $_GET['recoverPassword'] : false;
+        if(!empty($newPassword)){
+            $insertNewPassword = $this->model->insertNewPasswordByToken($tokenRecover, $newPassword);
+            return $insertNewPassword;
+        }
+        return false;
     }
 
     public function email(){
@@ -66,8 +98,8 @@ class ForgotPasswordController extends Controller
             $mail->setFrom('enviodeemail37@gmail.com', 'Nome do Remetente');
             $mail->addAddress("$emailRecoverPassword", 'Destinatário');
             $mail->isHTML(true); // Define o formato do e-mail como HTML
-            $mail->Subject = 'Assunto';
-            $mail->Body = 'Este é o corpo da mensagem <b>Olá em negrito!</b>';
+            $mail->Subject = 'Troca de senha no sistema';
+            $mail->Body = '<b>Troca de senha no sistema! Link: http://localhost/Estudando/System-Login/forgot-password?recoverPassword='.$this->recoverPassword().'</b>';
             $mail->AltBody = 'Este é o corpo da mensagem para clientes de e-mail que não reconhecem HTML';
         
             // Envia o e-mail
