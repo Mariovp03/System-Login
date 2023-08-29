@@ -2,24 +2,20 @@
 
 namespace Model;
 
-class ProfileChangeModel extends Model{
-
+class ProfileChangeModel extends Model
+{
     public function savePathUploadBd($pathArchive, $idUserLogged)
     {
-        $connectBd = $this->conn;
-        $archiveTreated = mysqli_real_escape_string($connectBd, $pathArchive);
-        $sql = "UPDATE users SET imageProfile = '$archiveTreated' WHERE id = $idUserLogged ";
-        $result = $connectBd->query($sql);
-        return $result;
+        $archiveTreated = $this->escapeAndSanitizeInput($pathArchive);
+        $sql = "UPDATE users SET imageProfile = ? WHERE id = ?";
+        return $this->executeUpdate($sql, [$archiveTreated, $idUserLogged]);
     }
 
     public function getPathUploadBd($idUserLogged)
     {
-        $connectBd = $this->conn;
-        $sql = "SELECT imageProfile FROM users WHERE id = $idUserLogged";
-        $result = $connectBd->query($sql);
-        $resulTreated = $result->fetch_assoc();
-        return $resulTreated;
+        $sql = "SELECT imageProfile FROM users WHERE id = ?";
+        $result = $this->executeQuery($sql, [$idUserLogged]);
+        $resultTreated = $result->fetch_assoc();
+        return $resultTreated;
     }
-
 }

@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 namespace Controller;
 
@@ -6,54 +6,66 @@ use Model\ProfileChangeModel;
 
 class ProfileChangeController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $this->getViewProfileChange();
     }
 
-    public function getViewProfileChange(){
+    public function getViewProfileChange()
+    {
         $pathProfileChangeTreated = PATH_BASE_VIEW . "ProfileChangeView.php";
-        echo $this->getView(
-            $pathProfileChangeTreated ,
-            [
-                'patchArchive' =>  $this->validatePathCorrectArchive(),
-            ] 
-        );
+        $patchArchive = $this->validatePathCorrectArchive();
+        echo $this->getView($pathProfileChangeTreated, ['patchArchive' => $patchArchive]);
     }
 
-    public function uploadFile(){
-        if(!empty($_FILES['file'])){
+    public function uploadFile()
+    {
+        if (!empty($_FILES['file'])) {
             $files = $_FILES['file'];
             $names = $files['name'];
-            $tmp_name = $files['tmp_name'];
-            foreach($names as $index => $name){
+            $tmp_names = $files['tmp_name'];
+
+            $uploadedPaths = [];
+
+            foreach ($names as $index => $name) {
                 $extension = pathinfo($name, PATHINFO_EXTENSION);
                 $newName = uniqid() . "." . $extension;
-                move_uploaded_file($tmp_name[$index], PATH_BASE_VIEW . "Images/$newName");
+                $destination = PATH_BASE_VIEW . "Images/$newName";
+                if (move_uploaded_file($tmp_names[$index], $destination)) {
+                    $uploadedPaths[] = "Views/Images/$newName";
+                }
             }
-            $pathArchiveInitial = "Views/Images/" . $newName;
-            return $pathArchiveInitial;
+
+            return $uploadedPaths;
         }
-        return false;
+
+        return [];
     }
 
-    public function validatePathCorrectArchive(){
-        $pathArchiveInitial = $this->uploadFile();
-        if($pathArchiveInitial != false && strpos($pathArchiveInitial, '.png') == true ){
-            $saveInBdPathImage = $this->savePathUploadBd($pathArchiveInitial);
-        } 
-        $getInBdPathImage = $this->getPathUploadBd()['imageProfile'];
-        return $getInBdPathImage;
+    public function validatePathCorrectArchive()
+    {
+        $uploadedPaths = $this->uploadFile();
+
+        foreach ($uploadedPaths as $path) {
+            if (strpos($path, '.png') !== false) {
+                $this->savePathUploadBd($path);
+            }
+        }
+
+        return $this->getPathUploadBd()['imageProfile'];
     }
 
-    public function savePathUploadBd($pathArchive){
-       $profileChangeModel = new ProfileChangeModel;
-       $idUserLogged = !empty($_SESSION['idUserLogged']) ? $_SESSION['idUserLogged'] : "" ;
-       return $profileChangeModel->savePathUploadBd($pathArchive, $idUserLogged);
+    public function savePathUploadBd($pathArchive)
+    {
+        $profileChangeModel = new ProfileChangeModel();
+        $idUserLogged = $_SESSION['idUserLogged'] ?? "";
+        $profileChangeModel->savePathUploadBd($pathArchive, $idUserLogged);
     }
 
-    public function getPathUploadBd(){
-        $profileChangeModel = new ProfileChangeModel;
-        $idUserLogged = !empty($_SESSION['idUserLogged']) ? $_SESSION['idUserLogged'] : "" ;
+    public function getPathUploadBd()
+    {
+        $profileChangeModel = new ProfileChangeModel();
+        $idUserLogged = $_SESSION['idUserLogged'] ?? "";
         return $profileChangeModel->getPathUploadBd($idUserLogged);
     }
 }

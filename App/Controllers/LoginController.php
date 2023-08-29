@@ -6,33 +6,53 @@ use Model\LoginModel;
 
 class LoginController extends Controller
 {
-    public function index(){
-        
-        $this->dataUser();
-        $this->getViewLogin();
+    public function index()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->processLogin();
+        }
+
+        $this->displayLoginPage();
     }
 
-    public function getViewLogin(){
+    public function displayLoginPage()
+    {
         $pathLoginTreated = PATH_BASE_VIEW . "LoginView.php";
 
         echo $this->getView(
-            $pathLoginTreated ,
+            $pathLoginTreated,
             [
                 'nameComplet' =>  'Mário do Vale',
-            ] 
+            ]
         );
-        
     }
 
-    public function dataUser(){
+    public function processLogin()
+    {
         $loginModel = new LoginModel;
-        $emailLoginUser = !empty($_POST['email']) ? $_POST['email'] : NULL;
-        $passwordLoginUser = !empty($_POST['password']) ? $_POST['password'] : NULL;
-        $searchUser = $loginModel->getUser($emailLoginUser, $passwordLoginUser);
-        if(!empty($searchUser)){
-            $_SESSION['idUserLogged'] = $searchUser['id'];
-            $_SESSION['userIsLogged'] = true;
-            header('location: home');
+
+        $emailLoginUser = $_POST['email'] ?? null;
+        $passwordLoginUser = $_POST['password'] ?? null;
+
+        if ($emailLoginUser && $passwordLoginUser) {
+            $searchUser = $loginModel->getUser($emailLoginUser, $passwordLoginUser);
+
+            if (!empty($searchUser)) {
+                $this->setUserSession($searchUser['id']);
+                $this->redirectToHomePage();
+            }
         }
+    }
+
+    public function setUserSession($userId)
+    {
+        $_SESSION['idUserLogged'] = $userId;
+        $_SESSION['userIsLogged'] = true;
+    }
+
+    public function redirectToHomePage()
+    {
+        header('Location: home');
+        exit; 
     }
 }

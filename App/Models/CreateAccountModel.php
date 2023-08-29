@@ -2,25 +2,33 @@
 
 namespace Model;
 
-class CreateAccountModel extends Model{
-
+class CreateAccountModel extends Model
+{
     public function creationUsers($email, $password)
     {
-        $connectBd = $this->conn;
-        $emailTreated = mysqli_real_escape_string($connectBd, $email);
-        $passwordTreated = password_hash(mysqli_real_escape_string($connectBd, $password), PASSWORD_ARGON2ID);
+        $emailTreated = $this->escapeAndSanitizeInput($email);
+        $passwordTreated = $this->hashPassword($password);
         $sql = "INSERT INTO users (email, password) VALUES ('$emailTreated', '$passwordTreated')";
-        $result = $connectBd->query($sql);
-        return $result;
+        return $this->conn->query($sql);
     }
-    
+
     public function selectEmailAlreadyRegistered($email)
     {
-        $connectBd = $this->conn;
-        $emailTreated = mysqli_real_escape_string($connectBd, $email);
+        $emailTreated = $this->escapeAndSanitizeInput($email);
         $sql = "SELECT * FROM users WHERE email = '$emailTreated'";
-        $result = $connectBd->query($sql);
-        $resultTreated = $result->fetch_assoc();
-        return $resultTreated;
+        $result = $this->conn->query($sql);
+        return $result->fetch_assoc();
+    }
+
+    protected function escapeAndSanitizeInput($input)
+    {
+        $connectBd = $this->conn;
+        $inputEscaped = mysqli_real_escape_string($connectBd, $input);
+        return $inputEscaped;
+    }
+
+    protected function hashPassword($password)
+    {
+        return password_hash($password, PASSWORD_ARGON2ID);
     }
 }
