@@ -1,7 +1,7 @@
 <?php
 
 namespace Controller;
-
+use Lib\LogAcessLib;
 use Model\LoginModel;
 
 class LoginController extends Controller
@@ -11,7 +11,6 @@ class LoginController extends Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->processLogin();
         }
-
         $this->displayLoginPage();
     }
 

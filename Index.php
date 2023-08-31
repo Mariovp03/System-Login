@@ -1,5 +1,9 @@
 
-<?php 
+<?php
+
+use Lib\ExcludeArchiveAfterDaysLib;
+use Lib\LogAcessLib;
+
 require 'Config.php';
 require __DIR__ . '/vendor/autoload.php';
 require 'Routes/Router.php';
@@ -34,6 +38,9 @@ try{
     $controller = $routeCurrent[$request][$paramsGet[0]]; 
     
     $controller();
+
+    (new LogAcessLib)->writeAlwaysPageAlter();
+    (new ExcludeArchiveAfterDaysLib)->excludeArchiveInDays('Logs', 7);
     
 } catch(Exception $e){
 
