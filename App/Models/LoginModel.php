@@ -31,4 +31,29 @@ class LoginModel extends Model
         return $resultTreated['password'] ?? "";
     }
 
+    public function insertTokenOnlyOneUser($tokenIp, $idUser)
+    {
+        $sql = "UPDATE users SET tokenOneLogin = ? WHERE id = ?";
+        return $this->executeUpdate($sql, [$tokenIp, $idUser]);
+    }
+
+    public function insertLocalizationUser($localization, $idUser)
+    {        
+        $sql = "INSERT INTO users_acess (localization, fk_id) VALUES ('$localization', $idUser)";
+        return $this->conn->query($sql);
+    }
+
+    public function quantityLoginForUser($idUser)
+    {
+        $sql = "SELECT COUNT(*) FROM users_acess WHERE fk_id = $idUser";
+        $result = $this->conn->query($sql);
+        return $result->fetch_assoc();
+    }
+
+    public function insertQuantityUserAcess($quantity, $id){
+        $sql = "UPDATE users SET quantity_login = ? WHERE id = ?";
+        return $this->executeUpdate($sql, [$quantity, $id]);
+    }
+    
+
 }

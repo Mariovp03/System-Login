@@ -3,6 +3,7 @@
         <h1 class="text-white ">Alterar foto de perfil</h1>
         <div>
             <a href="home" class="btn bg-primary text-white mt-4">Ir para os repositórios</a>            
+            <div class="btn bg-primary text-white mt-4 controlAcess">Controle de Acesso</div>
         </div>
         <form method="post" enctype="multipart/form-data">
             <div class="mt-5">

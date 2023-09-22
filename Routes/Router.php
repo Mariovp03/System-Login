@@ -40,8 +40,11 @@ function load($controller, $action){
         "GET" => [
             "home" => fn() => load("HomeController", "index"),
             "alterar-perfil" => fn() => load("ProfileChangeController", "index"),
+            "controle-de-acesso" => fn() => load("AccessControlController", "index"),
         ],
         "POST" => [
             "alterar-perfil" => fn() => load("ProfileChangeController", "index"),
+            "controle-de-acesso" => fn() => load("AccessControlController", "index"),
+
         ],
     ];

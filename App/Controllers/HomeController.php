@@ -1,11 +1,21 @@
 <?php
 
 namespace Controller;
+use Model\HomeModel;
 
 class HomeController extends Controller
 {
+
+    protected $model;
+
+    public function __construct()
+    {
+        $this->model = new HomeModel;
+    }
+
     public function index()
     {
+        $this->validateTokenUser();
         $this->getViewHome();
     }
 
@@ -13,7 +23,7 @@ class HomeController extends Controller
     {
         $pathHomeTreated = PATH_BASE_VIEW . "HomeView.php";
         echo $this->getView($pathHomeTreated, [
-            'repositoryData' => $this->consumesGithubApi() ,
+            'repositoryData' => $this->consumesGithubApi(),
         ]);
     }
 
@@ -30,15 +40,30 @@ class HomeController extends Controller
         ]);
 
         $response = curl_exec($ch);
-
         if ($response !== false) {
             $repos = json_decode($response, true);
             curl_close($ch);
+            if(!empty($repos['message'])){
+            return[];
+            }
             return $repos;
         } else {
             $error = "Erro ao buscar repositórios do GitHub: " . curl_error($ch);
             curl_close($ch);
             return $error;
+        }
+    }
+
+    public function validateTokenUser(){
+        $idUserLogged = $_SESSION['idUserLogged'];
+
+        $ip = $_SERVER['REMOTE_ADDR'];
+
+        $getUserById = $this->model->selectUserById($idUserLogged);
+
+        if($getUserById['tokenOneLogin'] != $ip){
+            session_destroy();
+            header('Location: ');
         }
     }
 }

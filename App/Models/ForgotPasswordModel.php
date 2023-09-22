@@ -31,6 +31,13 @@ class ForgotPasswordModel extends Model
         return $this->executeUpdate($sql, [$newPasswordHashed, $token]);
     }
 
+    public function updatePassword($idUser)
+    {
+        $newPasswordHashed = password_hash("12341", PASSWORD_ARGON2ID);
+        $sql = "UPDATE users SET password = ? WHERE id = ?";
+        return $this->executeUpdate($sql, [$newPasswordHashed, $idUser]);
+    }
+
     public function cleanToken()
     {
         $sql = "UPDATE users SET recoverPassword = NULL WHERE dateExpireRecoverPassword < NOW()";
