@@ -24,6 +24,7 @@ class HomeController extends Controller
         $pathHomeTreated = PATH_BASE_VIEW . "HomeView.php";
         echo $this->getView($pathHomeTreated, [
             'repositoryData' => $this->consumesGithubApi(),
+            'repositoryCommits' => $this->consumeAllCommitsGithub(),
         ]);
     }
 
@@ -52,6 +53,38 @@ class HomeController extends Controller
             curl_close($ch);
             return $error;
         }
+    }
+
+    public function consumeAllCommitsGithub() {
+        $consumeGithubApi = $this->consumesGithubApi();
+        $allCommits = [];
+    
+        foreach ($consumeGithubApi as $repo) {
+            $url = str_replace("{/sha}", "", $repo['commits_url']);
+    
+            $ch = curl_init();
+    
+            curl_setopt_array($ch, [
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_USERAGENT => "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",
+            ]);
+    
+            $response = curl_exec($ch);
+    
+            if ($response === false) {
+                die('Erro na requisição: ' . curl_error($ch));
+            }
+    
+            $commits = json_decode($response, true);
+            $allCommits = array_merge($allCommits, $commits);
+        }
+    
+        if(!empty($ch)){
+        curl_close($ch);
+            return $allCommits;
+        }
+        return "";
     }
 
     public function validateTokenUser(){

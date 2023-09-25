@@ -1,5 +1,6 @@
 
 $(document).ready(function() {
+    
     $("#filtro").on("keyup", function() {
         var inputText = $(this).val().toLowerCase();
         $("#lista-repositorios .card").each(function() {
@@ -10,19 +11,6 @@ $(document).ready(function() {
                 $(this).show();
             }
         });
-    });
-
-    $('.view-commits').click(function () {
-        var commitMessage = $(this).data('message');
-        $('#commitMessage').text(commitMessage);
-    });
-    
-    $(".viewCommit").click(function () {
-        $("#myModal").css("display", "block");
-    });
-
-    $("#fecharModal").click(function () {
-        $("#myModal").css("display", "none");
     });
 
     $(".controlAcess").click(function () {
@@ -43,6 +31,17 @@ $(document).ready(function() {
             }
         });
     });
+
+    $('.viewCommit').click(function () {
+        var modalId = $(this).data('target');
+        $(modalId).modal('show'); 
+    });
+
+    $('.closeModal').click(function () {
+        var modalId = $(this).closest('.modal').attr('id'); 
+        $('#' + modalId).modal('hide'); 
+    });
+
 });
 
 
